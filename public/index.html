@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - Chat App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+  <div class="login-box">
+    <h2>Welcome to Chat</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Enter your username" required>
+      <input type="file" id="avatar" accept="image/*" required>
+      <button type="submit">Join Chat</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const avatar = document.getElementById('avatar').files[0];
+
+      if (!username || !avatar) {
+        alert("Username and avatar required.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", avatar);
+
+      fetch("/upload", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const avatarUrl = data.fileUrl;
+        localStorage.setItem("username", username);
+        localStorage.setItem("avatar", avatarUrl);
+        window.location.href = "chat.html";
+      })
+      .catch(err => alert("Upload failed: " + err));
+    });
+  </script>
+</body>
+</html>
